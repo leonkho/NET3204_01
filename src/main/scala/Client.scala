@@ -1,31 +1,41 @@
-import java.io.{DataInputStream, DataOutputStream, OutputStream, PrintStream}
-import java.net.{InetAddress, Socket}
+import java.io._
+import java.net.{ConnectException, InetAddress, Socket, SocketException}
 import java.util.Scanner
 
-import scala.io.BufferedSource
+import scala.io.StdIn
+
 
 object Client extends App {
-  try {
-    val server = InetAddress.getByName("localhost")
-    val port = 2000
 
-    System.out.println(s"Connecting to ${server} on port ${port}")
-    val socket = new Socket(server, port)
+  var socket: Option[Socket] = None
 
-    System.out.println("Connection established.")
-    val output = new DataOutputStream(socket.getOutputStream())
+  while (true) {
 
-    System.out.println("Please enter a command.")
-    val sc = new Scanner(System.in)
-    val command = sc.nextLine()
-    output.writeUTF(command)
-    output.flush()
+    try {
+      val server = InetAddress.getByName("localhost")
+      val port = 2000
 
-    val input = new DataInputStream(socket.getInputStream())
-    System.out.println(">>" + input.readUTF())
+      //Establish a connection to localhost at port 2000
+//      println(s"Connecting to ${server} on port ${port}...")
+      socket = Some(new Socket(server, port))
+//      println("Connection established.")
 
-    socket.close()
-  } catch {
-    case e: Exception => e.printStackTrace()
+      //I/O streams via socket
+      val input = new DataInputStream(socket.get.getInputStream)
+      val output = new DataOutputStream(socket.get.getOutputStream)
+
+      //Prompt user for a command
+      println("Please enter a command. (Type \"exit\" to terminate connection.)")
+      output.writeBytes(s"${scala.io.StdIn.readLine(">> ")}\n")
+
+      //Fetch response from server
+      var response: String = input.readUTF()
+      println(response)
+
+    } catch {
+      case e: Exception => e.printStackTrace()
+    } finally {
+      socket foreach (_.close())
+    }
   }
 }

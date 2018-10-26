@@ -1,32 +1,39 @@
 import java.io.{DataInputStream, DataOutputStream, PrintStream}
-import java.net.ServerSocket
+import java.net.{ServerSocket, SocketException}
 
-import scala.io.BufferedSource
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration._
 
 object Server extends App {
+  val server = new ServerSocket(2000)
+  println("Server initiated, waiting for client...\n")
 
-  val socket = new ServerSocket(2000)
-//  socket.setSoTimeout(10000)
+  while (true) {
+    val socket = server.accept()
+//    println(s"Connection established with ${socket}.\n")
 
-  while(true) {
-    System.out.println("Server initiated.")
-    System.out.println("Waiting for client...")
+    Future {
+      //store local socket references for processing
+      try {
+        // Get a communication stream associated with the socket
+        val input = new DataInputStream(socket.getInputStream())
+        // Get a communication stream associated with the socket
+        val output = new DataOutputStream(socket.getOutputStream())
+        // Read from input stream
+        var request: Future[String] = Future(input.readLine())
+        val data: String = Await.result(request, 5 minutes)
 
-    try {
-      val server = socket.accept()
-      System.out.println(s"Connection established with ${socket}")
+        val client = s"Address: ${socket.getLocalAddress}, Port: ${socket.getPort}, Local port: ${socket.getLocalPort}"
+        print(s"[${client}] -> ${request}\n\n")
 
-      var input = new DataInputStream(server.getInputStream())
-      System.out.println("Input: " + input.readUTF())
-      System.out.println(input.readUTF() == "hi")
-
-      var output = new DataOutputStream(server.getOutputStream())
-      output.writeUTF("Hey there!")
-      output.flush()
-
-      server.close()
-    } catch {
-      case e: Exception => e.printStackTrace
+        Dictionary.searchWord(data)
+      } catch {
+        case e: Exception => e.printStackTrace()
+      } finally {
+        // Close the connection, but not the server socket
+        socket.close()
+      }
     }
   }
 }
