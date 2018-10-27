@@ -1,9 +1,7 @@
 import java.io._
-import java.net.{ConnectException, InetAddress, Socket, SocketException}
-import java.util.Scanner
+import java.net.{InetAddress, Socket}
 
 import scala.io.StdIn
-
 
 object Client extends App {
 
@@ -16,26 +14,33 @@ object Client extends App {
       val port = 2000
 
       //Establish a connection to localhost at port 2000
-//      println(s"Connecting to ${server} on port ${port}...")
       socket = Some(new Socket(server, port))
-//      println("Connection established.")
 
       //I/O streams via socket
       val input = new DataInputStream(socket.get.getInputStream)
       val output = new DataOutputStream(socket.get.getOutputStream)
 
-      //Prompt user for a command
-      println("Please enter a command. (Type \"exit\" to terminate connection.)")
-      output.writeBytes(s"${scala.io.StdIn.readLine(">> ")}\n")
+      //Prompt user for a word
+      println("\nPlease enter a word. (Type \"exit\" to terminate connection.)")
+      val word = StdIn.readLine(">> ")
 
-      //Fetch response from server
-      var response: String = input.readUTF()
+      //Fetch and print response from server
+      output.writeUTF(word)
+      val response = input.readUTF()
       println(response)
 
+      //If socket is being terminated, throw socketTermination
+      if(word == "exit") {
+        throw socketTermination
+      }
     } catch {
       case e: Exception => e.printStackTrace()
     } finally {
       socket foreach (_.close())
     }
   }
+}
+
+object socketTermination extends Throwable {
+  println("Socket connection terminated.")
 }

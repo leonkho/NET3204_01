@@ -1,8 +1,28 @@
 {
   "dictionary": [
     {
-      "word": "butt",
-      "definition": "The round fruit of a tree of the rose family, which typically has thin green or red skin and crisp flesh."
+      "word": "alpha",
+      "definition": "1. angular acceleration."
+    },
+    {
+      "word": "beta",
+      "definition": "1. a second-class mark given for a piece of work or an examination paper."
+    },
+    {
+      "word": "charlie",
+      "definition": "1. a fool"
+    },
+    {
+      "word": "delta",
+      "definition": "1. a finite increment"
+    },
+    {
+      "word": "echo",
+      "definition": "1. a sound or sounds caused by the reflection of sound waves from a surface back to the listener."
+    },
+    {
+      "word": "foxtrot",
+      "definition": "1. a ballroom dance having an uneven rhythm with alternation of slow and quick steps."
     }
   ]
 }
