@@ -11,9 +11,9 @@ object Server extends App {
 
   while (true) {
     val socket = server.accept()
-    val client = s"Address: ${socket.getLocalAddress}, Port: ${socket.getPort}, Local port: ${socket.getLocalPort}"
+    val client = s"[Address: ${socket.getLocalAddress}, Port: ${socket.getPort}, Local port: ${socket.getLocalPort}]"
 
-    println(s"Connection established with ${client}.\n")
+    println(Console.BLUE + s"Connection established with ${client}.\n" + Console.RESET)
 
     Future {
       try {
@@ -25,7 +25,7 @@ object Server extends App {
         var future: Future[String] = Future(input.readUTF())
         val request: String = Await.result(future, 5 minutes)
 
-        print(s"[${client}] -> ${request}\n\n")
+        print(Console.MAGENTA + s"[${client}] -> ${request}\n\n")
 
         val dictionary = new Dictionary()
         dictionary.getDictionary()
@@ -33,6 +33,7 @@ object Server extends App {
         request match {
           case "exit" => {
             output.writeUTF("\nClosing socket connection...")
+            println(Console.RED + s"Connection to ${client} has been terminated.\n" + Console.RESET)
             socket.close()
           }
 
@@ -42,7 +43,7 @@ object Server extends App {
         }
 
       } catch {
-        case e: SocketException => println(s"Connection to ${socket} was reset.")
+        case e: SocketException => println(Console.RED + s"Connection to ${socket} was reset.\n" + Console.RESET)
       } finally {
         //Close the connection, but not the server socket
         socket.close()
