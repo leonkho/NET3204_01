@@ -34,11 +34,11 @@ class Dictionary {
     var result = new String
     this.data.foreach(
       word => if(word._1.equals(request)) {
-        result = s"\nWord: ${word._1}\nDefinition: ${word._2}"
+        result = s"Word: ${word._1}\nDefinition: ${word._2}"
         return result
       }
       else {
-        result = s"\n${request} not found in dictionary."
+        result = s"${request} not found in dictionary."
       }
     )
 

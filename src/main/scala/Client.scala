@@ -28,7 +28,7 @@ object Client extends App {
       //Fetch and print response from server
       output.writeUTF(word)
       val response = input.readUTF()
-      println(response)
+      println("\n" + response)
 
       //If socket is being terminated, throw socketTermination
       if(word == "exit") {

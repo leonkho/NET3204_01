@@ -25,7 +25,7 @@ object Server extends App {
         var future: Future[String] = Future(input.readUTF())
         val request: String = Await.result(future, 5 minutes)
 
-        print(Console.MAGENTA + s"[${client}] -> ${request}\n\n")
+        print(Console.MAGENTA + s"${client} -> ${request}\n\n" + Console.RESET)
 
         val dictionary = new Dictionary()
         dictionary.getDictionary()
@@ -38,6 +38,9 @@ object Server extends App {
           }
 
           case default => {
+            val result = dictionary.searchWord(request)
+//            println(Console.CYAN + s"Sending result of ${request}: ${result}\nTo: ${client}\n" + Console.RESET)
+            println(Console.CYAN + s"[${result}] -> ${client}\n")
             output.writeUTF(dictionary.searchWord(request))
           }
         }
