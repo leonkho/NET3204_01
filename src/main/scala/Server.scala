@@ -7,6 +7,16 @@ import scala.concurrent.duration._
 
 object Server extends App {
   val server = new ServerSocket(2000)
+
+  println(Console.YELLOW +
+    "+----------------------------------+\n" +
+    "|  ____                            |\n" +
+    "| / ___|  ___ _ ____   _____ _ __  |\n" +
+    "| \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__| |\n" +
+    "|  ___) |  __/ |   \\ V /  __/ |    |\n" +
+    "| |____/ \\___|_|    \\_/ \\___|_|    |\n" +
+    "|                                  |\n" +
+    "+----------------------------------+\n" +Console.RESET)
   println("Server initiated, waiting for client...\n")
 
   while (true) {
@@ -32,16 +42,14 @@ object Server extends App {
 
         request match {
           case "exit" => {
-            output.writeUTF("\nClosing socket connection...")
-            println(Console.RED + s"Connection to ${client} has been terminated.\n" + Console.RESET)
             socket.close()
+            println(Console.RED + s"Connection to ${client} has been terminated.\n" + Console.RESET)
           }
 
           case default => {
-            val result = dictionary.searchWord(request)
-//            println(Console.CYAN + s"Sending result of ${request}: ${result}\nTo: ${client}\n" + Console.RESET)
+            val result = dictionary.searchWord(request).capitalize
             println(Console.CYAN + s"[${result}] -> ${client}\n")
-            output.writeUTF(dictionary.searchWord(request))
+            output.writeUTF(result)
           }
         }
 
